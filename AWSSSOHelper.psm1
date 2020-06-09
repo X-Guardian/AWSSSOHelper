@@ -1,5 +1,3 @@
-#Requires -PSEdition Core
-
 <#
 .SYNOPSIS
 This is a simple utility script that allows you to retrieve credentials for AWS accounts that are secured using AWS SSO.  Access tokens are cached locally to prevent the need to be pushed to a web browser each time you invoke the script (this is similar behaviour to aws cli v2).
@@ -47,10 +45,16 @@ function Get-AWSSSORoleCredential {
     )
 
     # Manually import the AWSPowerShell.NetCore module if present as it is not configured for auto-loading
-    $awsNetCorePowerShellModuleName = 'AWSPowerShell.NetCore'
-    if (Get-Module -Name $awsNetCorePowerShellModuleName -ListAvailable)
+    if ($PSVersionTable.PSEdition -ne 'Core') {
+        $awsPowerShellModuleName = 'AWSPowerShell'
+    }
+    else {
+        $awsPowerShellModuleName = 'AWSPowerShell.NetCore'
+    }
+
+    if (Get-Module -Name $awsPowerShellModuleName -ListAvailable)
     {
-        Import-Module -Name $awsNetCorePowerShellModuleName
+        Import-Module -Name $awsPowerShellModuleName
     }
 
     if ($Region) {
